@@ -1,0 +1,35 @@
+
+
+
+
+
+
+
+
+a high-level description of how you generate a level with rooms connected by corridors (or as much as you were able to implement).
+
+
+How did I create my rooms? I first made a struct Room that would contain all the important characteristics of a room which were its top left corner with an x and y coordinate along with the rooms height and width. The height and width would be added on top of the x and y coordinate and using a 2D array, this essentially made the room. 
+
+Now, implementing each room with random probability and position during generation. 
+In total, I had 8 functions that were involved with creating each room. The main one was play, the function that would call everything after being called by the main.
+
+The most basic and important function, generateEntireMap.
+This was a pretty simple function that essentially makes an 18 by 70 map, 18 being rows, and 70 being columns and would assign each index with a # to represent a wall. 
+
+The next function was createRoom. 
+This essentially created a room if called and was made of a nested for loop that just ran through under the condition that the point we start at, (the random x and y coord) was less than its height and width and replaced each index with a space to represent a room.
+
+The next function was noOverlap.
+There was no point in making rooms if it was going to be a random ugly chunk of blocks. Therefore I had to make sure that before actually creating the room, I would make a room, check EVERY x and y value and see if there was a space. If there was, that meant it was overlapping with another room so that room would just not be created and the function would return false. Otherwise, it would run true and my play function would call createRoom right after. 
+
+The last basic room function is printMap and that just prints every index trivially. 
+
+Finally, we are at the play function. We first make a vector of rooms to keep track of the rooms for corridors later. We then call generateEntireMap to make a map with a random number of rooms from 10 to 13. Most of these rooms were never made anyways and if I had less parameters, I would occasionally have too little rooms. We then ran through each room and made its coordinates randomly while making sure we were still in range and wouldn't extend outside the border. If there were no overlaps in the room with existing rooms, we created it and pushed that room into my vector. After making each room, I would then connect the rooms to one another randomly with random corridors using my connectRoom function... to be explained in a bit. 
+
+
+CORRIDORS
+
+First, I had two helper functions drawHorizontalCorridor and drawVerticalCorridor. These two were needed because there was the case that the two rooms I wanted to connect had no overlapping x and y coordinates so I would need an L shaped corridor. Without loss of generality, drawHorizontalCorridor inputs the x and y value of the room we choose, and spouts to the x value of the other room. Here, we just do a swap of x1 and x2 so I do not have to write two for loops to check if x1 > x2 and then switch the variables. It is essentially the same process but going the other way so I did swap to save run time. It then changes every wall into a pathway until we hit the other room OR the corresponding coordinate of the other room. If so, we would then start drawing vertically. WLOG, swap the ordering due to the randomness in my function. drawVertical is trivial. 
+
+I also wanted some randomness in my corridors rather than having them always spout from the center of the wall and go to the other center of the other room. I first made the points that the first room would star the corridor from and then where it would hit the other room with some randInt(...) I had to include +1 and -1 because i.e. if the first room was on the left, and the second on the right, it would occasionally start the corridor from the left side of the first room and end at the right side of the other room and it would leave a weird one space sticking out of other room. I then set the coordinates randomly somewhere within the border and somewhere to the other room's border and with a randInt condition, it would either draw horizontally first or horizontally second. 
